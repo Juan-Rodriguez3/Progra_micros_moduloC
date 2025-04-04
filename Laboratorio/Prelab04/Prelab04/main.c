@@ -20,16 +20,15 @@ int main(void)
     setup();
     while (1) 
     {
+		PORTB = (1<<PORTB2);
 		switch (pb){
 			case 1:
-			contador++;
 			PORTD++;			//Incrementar contador
 			pb=0;				//Resetear pb
 			break;
 			
 			case 2:
-			contador--;			//Decrementar contador
-			PORTD--;
+			PORTD--;			//Decrementar contador
 			pb=0;				//Resetear pb
 			break;		
 					
@@ -45,7 +44,7 @@ void setup () {
 	
 	
 	DDRC = 0x00;		//Pines PC0, PC1, PC2 como entrada
-	PORTC |= (1<<PORTC0) | (1<<PORTC1) ;
+	PORTC |= (1<<PORTC0) | (1<<PORTC1) ;		//pullups portc
 	
 	DDRD = 0xFF;		//Puerto D como salida
 	PORTD= 0x00;
@@ -59,22 +58,22 @@ void setup () {
 	sei();
 }
 
-	
+
+
+//Subrutinas NON Interrupt	
 
 
 //Subrutinas de interrupciones
 ISR(PCINT1_vect){
-	uint8_t ultimate_state = 0xFF;
-	uint8_t current_state = PINB & ((1 << PINB0)|(1<<PINB1));
 	
-	if (ultimate_state & (1<<PINB0) && !(current_state&(1<<PINB0))){
+	
+	if (!(PINC & (1<<PINC0))){
 		pb=1;
 	}
-	else if (ultimate_state & (1<<PINB1) && !(current_state&(1<<PINB1))){
+	else if (!(PINC & (1<<PINC1))){
 		pb=2;
 	}
 	else{
 		pb=0;
 	}
-	ultimate_state=current_state;
 }
