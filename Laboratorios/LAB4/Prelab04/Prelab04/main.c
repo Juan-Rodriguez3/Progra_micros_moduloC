@@ -18,6 +18,7 @@ uint8_t multiplex=0;
 //Prototipos
 void setup();
 void initADC();
+void MUX(uint8_t flag);
 void initTIMER0();
 int OVF_UNF(uint8_t cont,  uint8_t top, uint8_t bottom);
 
@@ -27,8 +28,7 @@ int main(void)
     setup();
     while (1) 
     {
-		
-		
+		MUX(multiplex);
 		PORTD= contador;
     }
 }
