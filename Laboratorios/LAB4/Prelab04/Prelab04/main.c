@@ -11,15 +11,9 @@ uint8_t pb=0;			//Estados de botones
 uint8_t contador=0;		//Contador para display
 uint8_t top=0xFF;
 uint8_t bottom=0;
-uint8_t cont_hex=0;
-uint8_t delay=0;
-uint8_t multiplex=0;
 
 //Prototipos
 void setup();
-void initADC();
-void MUX(uint8_t flag);
-void initTIMER0();
 int OVF_UNF(uint8_t cont,  uint8_t top, uint8_t bottom);
 
 //Funcion principal
@@ -28,7 +22,8 @@ int main(void)
     setup();
     while (1) 
     {
-		MUX(multiplex);
+		PORTB = (1<<PORTB2);
+		contador= OVF_UNF(contador, top, bottom);
 		PORTD= contador;
     }
 }
@@ -37,12 +32,8 @@ int main(void)
 void setup () {
 	cli();				//Desactivar interrupciones globales
 	
-	CLKPR = (1<< CLKPCE);
-	CLKPR |= (1<<CLKPS2);	//Configurar prescaler principal a 16
-	
 	DDRC = 0x00;		//Pines PC0, PC1, PC2 como entrada
-	PORTC |= (1<<PORTC0) | (1<<PORTC1) ;		//pullups PC0,PC1
-	PORTC &= ~(1 << PC2);						//Deshabilitar el Pullup PC2	
+	PORTC |= (1<<PORTC0) | (1<<PORTC1) ;		//pullups portc
 	
 	DDRD = 0xFF;		//Puerto D como salida
 	PORTD= 0x00;
@@ -52,27 +43,8 @@ void setup () {
 	
 	PCICR |= (1 << PCIE1);		//habilita interrupciones en el PORTC
 	PCMSK1 |= (1 << PCINT8) | (1 << PCINT9);	//interrupciones para PC0 y PC1
-	initADC();
-	void initTIMER0();
-	sei();			//Activar interrupciones globales
-}
-
-void initTIMER0(){
-	TCCR0A=0;
-	TCCR0B = (1<<CS01);			//Modo normal prescaler 8
-	TCNT0= 5;
-	TIMSK0=(1<<TOIE0);			//Habilitar interrupciones de desbordamiento.
-}
-
-void initADC(){
-	ADMUX=0;
-	ADMUX |= (1<<MUX1);			//Selecionar el canal 2
-	ADMUX |= (1<<ADLAR);		//Justificación a la derecha
-	ADMUX |= (1<<REFS0);		//Voltaje de referencia 5V
 	
-	ADCSRA=0;
-	ADCSRA |= (1<<ADEN) | (1<<ADIE) | (1<<ADPS1) |(1<<ADPS0) ; // Habilitar ADC, interrupciones ADC y prescaler de 8
-	ADCSRA |= (1<<ADSC);		// Empieza a leer o a hacer la conversión
+	sei();			//Activar interrupciones globales
 }
 
 int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
@@ -102,28 +74,6 @@ int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
 	}
 }
 
-void MUX(uint8_t flag){
-	switch (flag){
-		case 0:
-		contador= OVF_UNF(contador, top, bottom);
-		PORTB &= !((1<<PORTB0)|(1<<PORTB1));	//Apagar PB0 y PB1 Display
-		PORTB |= (1<<PORTB2);		//Encender contador binario d e8 bits.
-		break;
-		case 1:
-		contador=0xFF;
-		PORTB &= !((1<<PORTB2)|(1<<PORTB1));	//Apagar PB1 Display y contador binario
-		PORTB |= (1<<PORTB0);					//Encender el primer display izquierdo
-		break;
-		case 2:
-		contador=0xFF;
-		PORTB &= !((1<<PORTB0)|(1<<PORTB2));	//Apagar PB0 y contador binario
-		PORTB |= (1<<PORTB1);		//Encender display derecho
-		break;
-		default:
-		break;
-	}
-}
-
 //Subrutinas NON Interrupt	
 
 
@@ -139,18 +89,4 @@ ISR(PCINT1_vect){
 	else{
 		pb=0;
 	}
-}
-
-ISR(ADC_vect){
-	cont_hex++;
-	ADCSRA |= (1<<ADSC);		//Vuelve a leer
-}
-
-ISR(TIMER0_OVF_vect){
-	TCNT0= 5;				//Reiniciar el contador
-	multiplex++;
-	if (multiplex==3){
-		multiplex=0;
-	}
-	
 }
