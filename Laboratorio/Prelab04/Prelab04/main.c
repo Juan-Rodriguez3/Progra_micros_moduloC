@@ -9,10 +9,12 @@
 #include <avr/interrupt.h>
 uint8_t pb=0;			//Estados de botones
 uint8_t contador=0;		//Contador para display
+uint8_t top=0xFF;
+uint8_t bottom=0;
 
 //Prototipos
 void setup();
-
+int OVF_UNF(uint8_t cont,  uint8_t top, uint8_t bottom);
 
 //Funcion principal
 int main(void)
@@ -21,27 +23,14 @@ int main(void)
     while (1) 
     {
 		PORTB = (1<<PORTB2);
-		switch (pb){
-			case 1:
-			PORTD++;			//Incrementar contador
-			pb=0;				//Resetear pb
-			break;
-			
-			case 2:
-			PORTD--;			//Decrementar contador
-			pb=0;				//Resetear pb
-			break;		
-					
-			default:
-			break;
-		}
+		contador= OVF_UNF(contador, top, bottom);
+		PORTD= contador;
     }
 }
 
 //Subrutinas NON Interrupt
 void setup () {
-	
-	
+	cli();				//Desactivar interrupciones globales
 	
 	DDRC = 0x00;		//Pines PC0, PC1, PC2 como entrada
 	PORTC |= (1<<PORTC0) | (1<<PORTC1) ;		//pullups portc
@@ -55,17 +44,41 @@ void setup () {
 	PCICR |= (1 << PCIE1);		//habilita interrupciones en el PORTC
 	PCMSK1 |= (1 << PCINT8) | (1 << PCINT9);	//interrupciones para PC0 y PC1
 	
-	sei();
+	sei();			//Activar interrupciones globales
 }
 
-
+int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
+	
+	if (cont==bottom && pb==2){
+		cont=top;
+		pb=0;
+		return cont;
+	}
+	else if (cont==top && pb==1){
+		cont=bottom;
+		pb=0;
+		return cont;
+	}	
+	else if(pb==1){
+		cont++;
+		pb=0;
+		return cont;
+	}
+	else if( pb==2){
+		cont--;
+		pb=0;
+		return cont;
+	}
+	else {
+		return cont;
+	}
+}
 
 //Subrutinas NON Interrupt	
 
 
 //Subrutinas de interrupciones
 ISR(PCINT1_vect){
-	
 	
 	if (!(PINC & (1<<PINC0))){
 		pb=1;
