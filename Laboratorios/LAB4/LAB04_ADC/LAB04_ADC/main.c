@@ -73,12 +73,12 @@ void initTIMER0(){
 void initADC(){
 	ADMUX=0;
 	ADMUX |= (1<<MUX1);			//Selecionar el canal 2
-	ADMUX |= (1<<ADLAR);		//Justificación a la derecha
+	ADMUX |= (1<<ADLAR);		//Justificaci?n a la derecha
 	ADMUX |= (1<<REFS0);		//Voltaje de referencia 5V
 	
 	ADCSRA=0;
 	ADCSRA |= (1<<ADEN) | (1<<ADIE) | (1<<ADPS1) |(1<<ADPS0) ; // Habilitar ADC, interrupciones ADC y prescaler de 8
-	ADCSRA |= (1<<ADSC);		// Empieza a leer o a hacer la conversión
+	ADCSRA |= (1<<ADSC);		// Empieza a leer o a hacer la conversi?n
 }
 
 int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
@@ -116,12 +116,12 @@ void MUX(uint8_t flag){
 		PORTB = 0b00000100;
 		break;
 		case 1:
-		cont_hex=DISPLAY[DIPSH];
+		cont_hex=DISPLAY[DIPSH];  //Mostrar parte alta 
 		PORTD = cont_hex;
 		PORTB = 0b00000001;
 		break;
 		case 2:
-		cont_hex=DISPLAY[DIPSL];
+		cont_hex=DISPLAY[DIPSL];	//Mostrar parte baja
 		PORTD= cont_hex;
 		PORTB = 0b00000010;
 		break;
@@ -147,36 +147,8 @@ ISR(PCINT1_vect){
 	}
 }
 ISR(ADC_vect){
-	DIPSL= (ADCH & 0x0F);
-	
-	if (ADCH & (1<<4)){
-		DIPSH|=(1<<0);
-	}
-	else {
-		DIPSH&=~(1<<0);
-	}
-	
-	if (ADCH & (1<<5)){
-		DIPSH|=(1<<1);
-	}
-	else {
-		DIPSH&=~(1<<1);
-	}
-	
-	if (ADCH & (1<<6) ){
-		DIPSH|=(1<<2);
-	}
-	else {
-		DIPSH&=~(1<<2);
-	}
-	
-	if (ADCH & (1<<7)){
-		DIPSH|=(1<<3);
-	}
-	else {
-		DIPSH&=~(1<<3);
-	}
-	
+	DIPSL= (ADCH & 0x0F);		//Parte baja de la lectura de ADC
+	DIPSH= ((ADCH>>4) & 0x0F);		//Parte alta desplaza a los bits menos significativos para que su valor sea entre 0 a 15
 	ADCSRA |= (1<<ADSC);		//Vuelve a leer
 }
 
