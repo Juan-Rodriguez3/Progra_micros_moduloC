@@ -15,6 +15,7 @@ uint8_t DIPSL=0;
 uint8_t DIPSH=0;
 uint8_t cont_hex=0;
 uint8_t multiplex=1;
+uint8_t delay_ms=208;
 
 uint8_t DISPLAY[16] = {0xF3, 0x81, 0xEA, 0xE9, 0x99, 0x79, 0x7B, 0xC1, 0xFB, 0xF9, 0xDB, 0x3B, 0x72, 0xAB, 0x7A, 0x5A};
 
@@ -32,6 +33,13 @@ int main(void)
     while (1) 
     {
 		MUX(multiplex);
+		if (contador==ADCH){
+			PORTB |= (1<<PORTB3);		//Encender Led de alarma
+		}
+		else{
+			PORTB &= ~(1<<PORTB3);
+		}
+		
     }
 }
 
@@ -49,7 +57,7 @@ void setup () {
 	DDRD = 0xFF;		//Puerto D como salida
 	PORTD= 0x00;
 	
-	DDRB |= (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2);
+	DDRB |= (1 << PORTB0) | (1 << PORTB1) | (1 << PORTB2)| (1 << PORTB3);
 	PORTB = 0x00;		//Pines PB0, PB1 y PB2 como salida
 	
 	PCICR |= (1 << PCIE1);		//habilita interrupciones en el PORTC
@@ -57,14 +65,15 @@ void setup () {
 	
 	initADC();
 	initTIMER0();
+	UCSR0B = 0x00;  // Desactiva transmisor y receptor
 	  
 	sei();			//Activar interrupciones globales
 }
 
 void initTIMER0(){
 	TCCR0A=0;
-	TCCR0B = (1<<CS01);			//Modo normal prescaler 8
-	TCNT0= 5;
+	TCCR0B |= (1<<CS01)|(1<<CS00);			//Modo normal prescaler 8
+	TCNT0= delay_ms;
 	TIMSK0|=(1<<TOIE0);			//Habilitar interrupciones de desbordamiento.
 }
 
@@ -82,7 +91,6 @@ void initADC(){
 }
 
 int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
-	
 	if (cont==bottom && pb==2){
 		cont=top;
 		pb=0;
@@ -135,7 +143,6 @@ void MUX(uint8_t flag){
 
 //Subrutinas de interrupciones
 ISR(PCINT1_vect){
-
 	if (!(PINC & (1<<PINC0))){
 		pb=1;
 	}
@@ -148,14 +155,14 @@ ISR(PCINT1_vect){
 }
 ISR(ADC_vect){
 	DIPSL= (ADCH & 0x0F);		//Parte baja de la lectura de ADC
-	DIPSH= ((ADCH>>4) & 0x0F);		//Parte alta desplaza a los bits menos significativos para que su valor sea entre 0 a 15
+	DIPSH= (ADCH>>4) ;		//Parte alta desplaza a los bits menos significativos para que su valor sea entre 0 a 15
 	ADCSRA |= (1<<ADSC);		//Vuelve a leer
 }
 
 
 
 ISR(TIMER0_OVF_vect){
-	TCNT0= 5;				//Reiniciar el contador
+	TCNT0= delay_ms;				//Reiniciar el contador
 	multiplex++;
 	if (multiplex==3){
 		multiplex=0;
