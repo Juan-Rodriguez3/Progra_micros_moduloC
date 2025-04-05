@@ -11,16 +11,18 @@ uint8_t pb=0;			//Estados de botones
 uint8_t contador=0;		//Contador para display
 uint8_t top=0xFF;
 uint8_t bottom=0;
+uint8_t DIPSL=0;
+uint8_t DIPSH=0;
 uint8_t cont_hex=0;
-uint8_t delay=0;
 uint8_t multiplex=1;
 
+uint8_t DISPLAY[16] = {0xF3, 0x81, 0xEA, 0xE9, 0x99, 0x79, 0x7B, 0xC1, 0xFB, 0xF9, 0xDB, 0x3B, 0x72, 0xAB, 0x7A, 0x5A};
 
 //Prototipos
 void setup();
-//void initADC();
+void initADC();
 void MUX(uint8_t flag);
-//void initTIMER0();
+void initTIMER0();
 int OVF_UNF(uint8_t cont,  uint8_t top, uint8_t bottom);
 
 //Funcion principal
@@ -37,8 +39,8 @@ int main(void)
 void setup () {
 	cli();				//Desactivar interrupciones globales
 	
-	/*CLKPR = (1<< CLKPCE);
-	CLKPR |= (1<<CLKPS2);	//Configurar prescaler principal a 16*/
+	CLKPR = (1<< CLKPCE);
+	CLKPR |= (1<<CLKPS2);	//Configurar prescaler principal a 16
 	
 	DDRC = 0x00;		//Pines PC0, PC1, PC2 como entrada
 	PORTC |= (1<<PORTC0) | (1<<PORTC1) ;		//pullups PC0,PC1
@@ -53,21 +55,21 @@ void setup () {
 	PCICR |= (1 << PCIE1);		//habilita interrupciones en el PORTC
 	PCMSK1 |= (1 << PCINT8) | (1 << PCINT9);	//interrupciones para PC0 y PC1
 	
-	//initADC();
-	//initTIMER0();
+	initADC();
+	initTIMER0();
 	  
 	sei();			//Activar interrupciones globales
 }
 
-/*void initTIMER0(){
+void initTIMER0(){
 	TCCR0A=0;
 	TCCR0B = (1<<CS01);			//Modo normal prescaler 8
 	TCNT0= 5;
 	TIMSK0|=(1<<TOIE0);			//Habilitar interrupciones de desbordamiento.
 }
-*/
 
-/*
+
+
 void initADC(){
 	ADMUX=0;
 	ADMUX |= (1<<MUX1);			//Selecionar el canal 2
@@ -78,7 +80,7 @@ void initADC(){
 	ADCSRA |= (1<<ADEN) | (1<<ADIE) | (1<<ADPS1) |(1<<ADPS0) ; // Habilitar ADC, interrupciones ADC y prescaler de 8
 	ADCSRA |= (1<<ADSC);		// Empieza a leer o a hacer la conversión
 }
-*/
+
 int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
 	
 	if (cont==bottom && pb==2){
@@ -108,20 +110,20 @@ int OVF_UNF(uint8_t cont, uint8_t top, uint8_t bottom){
 
 void MUX(uint8_t flag){
 	switch (flag){
-		case 1:
+		case 0:
 		contador= OVF_UNF(contador, top, bottom);
 		PORTD= contador;
-		PORTB = 0x04;
+		PORTB = 0b00000100;
+		break;
+		case 1:
+		cont_hex=DISPLAY[DIPSH];
+		PORTD = cont_hex;
+		PORTB = 0b00000001;
 		break;
 		case 2:
-		contador=0xFF;
-		PORTD= contador;
-		PORTB = 0x01;
-		break;
-		case 3:
-		contador=0xFF;
-		PORTD= contador;
-		PORTB = 0x02;
+		cont_hex=DISPLAY[DIPSL];
+		PORTD= cont_hex;
+		PORTB = 0b00000010;
 		break;
 		default:
 		break;
@@ -144,15 +146,42 @@ ISR(PCINT1_vect){
 		pb=0;
 	}
 }
-
-/*
 ISR(ADC_vect){
-	cont_hex++;
+	DIPSL= (ADCH & 0x0F);
+	
+	if (ADCH & (1<<4)){
+		DIPSH|=(1<<0);
+	}
+	else {
+		DIPSH&=~(1<<0);
+	}
+	
+	if (ADCH & (1<<5)){
+		DIPSH|=(1<<1);
+	}
+	else {
+		DIPSH&=~(1<<1);
+	}
+	
+	if (ADCH & (1<<6) ){
+		DIPSH|=(1<<2);
+	}
+	else {
+		DIPSH&=~(1<<2);
+	}
+	
+	if (ADCH & (1<<7)){
+		DIPSH|=(1<<3);
+	}
+	else {
+		DIPSH&=~(1<<3);
+	}
+	
 	ADCSRA |= (1<<ADSC);		//Vuelve a leer
 }
-*/
 
-/*
+
+
 ISR(TIMER0_OVF_vect){
 	TCNT0= 5;				//Reiniciar el contador
 	multiplex++;
@@ -160,4 +189,4 @@ ISR(TIMER0_OVF_vect){
 		multiplex=0;
 	}
 	
-}*/
+}
