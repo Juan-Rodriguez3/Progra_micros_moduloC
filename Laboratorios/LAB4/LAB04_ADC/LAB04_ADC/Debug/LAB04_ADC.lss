@@ -358,11 +358,11 @@ int main(void)
 		MUX(multiplex);
  1e8:	80 91 11 01 	lds	r24, 0x0111	; 0x800111 <multiplex>
  1ec:	0e 94 c6 00 	call	0x18c	; 0x18c <MUX>
-		if (contador==ADCH){
+		if (ADCH>contador){
  1f0:	90 91 79 00 	lds	r25, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7f8079>
  1f4:	80 91 18 01 	lds	r24, 0x0118	; 0x800118 <contador>
- 1f8:	98 13       	cpse	r25, r24
- 1fa:	04 c0       	rjmp	.+8      	; 0x204 <main+0x20>
+ 1f8:	89 17       	cp	r24, r25
+ 1fa:	20 f4       	brcc	.+8      	; 0x204 <main+0x20>
 			PORTB |= (1<<PORTB3);		//Encender Led de alarma
  1fc:	85 b1       	in	r24, 0x05	; 5
  1fe:	88 60       	ori	r24, 0x08	; 8

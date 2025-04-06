@@ -33,7 +33,7 @@ int main(void)
     while (1) 
     {
 		MUX(multiplex);
-		if (contador==ADCH){
+		if (ADCH>contador){
 			PORTB |= (1<<PORTB3);		//Encender Led de alarma
 		}
 		else{
