@@ -25,7 +25,6 @@ void initPWM1(){
 	TCCR1B |= (1<<WGM12)|(1<<WGM13);
 	
 	TCCR1B |= (1<<CS11);	//Prescaler de 8
-	OCR1A=69;
-	//OCR1A=300;
-	ICR1= 312; //TOP
+	
+	ICR1= 39999; //TOP
 }

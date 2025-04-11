@@ -300,17 +300,17 @@ END GROUP
                 0x00000090                initADC
  .text.setup    0x000000b0       0x26 main.o
                 0x000000b0                setup
- .text.main     0x000000d6        0x6 main.o
+ .text.main     0x000000d6       0x12 main.o
                 0x000000d6                main
  .text.__vector_21
-                0x000000dc       0x62 main.o
-                0x000000dc                __vector_21
+                0x000000e8       0x62 main.o
+                0x000000e8                __vector_21
  .text.DutyCycle
-                0x0000013e       0x20 PWM1/PWM1.o
-                0x0000013e                DutyCycle
+                0x0000014a       0x20 PWM1/PWM1.o
+                0x0000014a                DutyCycle
  .text.initPWM1
-                0x0000015e       0x3e PWM1/PWM1.o
-                0x0000015e                initPWM1
+                0x0000016a       0x32 PWM1/PWM1.o
+                0x0000016a                initPWM1
  .text.libgcc.div
                 0x0000019c       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
                 0x0000019c                __udivmodsi4
@@ -461,11 +461,11 @@ END GROUP
  .debug_abbrev  0x000005a2       0xdd main.o
  .debug_abbrev  0x0000067f       0x7a PWM1/PWM1.o
 
-.debug_line     0x00000000      0x36a
+.debug_line     0x00000000      0x36e
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x134 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.7.374/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_line    0x00000134      0x14c main.o
- .debug_line    0x00000280       0xea PWM1/PWM1.o
+ .debug_line    0x00000134      0x156 main.o
+ .debug_line    0x0000028a       0xe4 PWM1/PWM1.o
 
 .debug_frame    0x00000000       0xd0
  *(.debug_frame)

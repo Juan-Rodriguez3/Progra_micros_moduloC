@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 000006f9  00000000  00000000  00000b3a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000036a  00000000  00000000  00001233  2**0
+  8 .debug_line   0000036e  00000000  00000000  00001233  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000000d0  00000000  00000000  000015a0  2**2
+  9 .debug_frame  000000d0  00000000  00000000  000015a4  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000003bd  00000000  00000000  00001670  2**0
+ 10 .debug_str    000003bd  00000000  00000000  00001674  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000000ec  00000000  00000000  00001a2d  2**0
+ 11 .debug_loc    000000ec  00000000  00000000  00001a31  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000040  00000000  00000000  00001b19  2**0
+ 12 .debug_ranges 00000040  00000000  00000000  00001b1d  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -54,7 +54,7 @@ Disassembly of section .text:
   48:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   4c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   50:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
-  54:	0c 94 6e 00 	jmp	0xdc	; 0xdc <__vector_21>
+  54:	0c 94 74 00 	jmp	0xe8	; 0xe8 <__vector_21>
   58:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   5c:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
   60:	0c 94 46 00 	jmp	0x8c	; 0x8c <__bad_interrupt>
@@ -117,7 +117,7 @@ void initADC(){
   ae:	08 95       	ret
 
 000000b0 <setup>:
-		
+		OCR1A=1005;
     }
 }
 //************Funciones************
@@ -144,7 +144,7 @@ void setup(){
 	initADC();
   ca:	0e 94 48 00 	call	0x90	; 0x90 <initADC>
 	initPWM1();
-  ce:	0e 94 af 00 	call	0x15e	; 0x15e <initPWM1>
+  ce:	0e 94 b5 00 	call	0x16a	; 0x16a <initPWM1>
 	sei();
   d2:	78 94       	sei
   d4:	08 95       	ret
@@ -157,127 +157,131 @@ int main()
 {
     setup();
   d6:	0e 94 58 00 	call	0xb0	; 0xb0 <setup>
-  da:	ff cf       	rjmp	.-2      	; 0xda <main+0x4>
+	
+    while (1) 
+    {
+		//OCR1A=4995;
+		OCR1A=1005;
+  da:	8d ee       	ldi	r24, 0xED	; 237
+  dc:	93 e0       	ldi	r25, 0x03	; 3
+  de:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7f8089>
+  e2:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7f8088>
+  e6:	f9 cf       	rjmp	.-14     	; 0xda <main+0x4>
 
-000000dc <__vector_21>:
+000000e8 <__vector_21>:
 
 
 
 //************Interrupciones************
 
 ISR(ADC_vect){
-  dc:	1f 92       	push	r1
-  de:	0f 92       	push	r0
-  e0:	0f b6       	in	r0, 0x3f	; 63
-  e2:	0f 92       	push	r0
-  e4:	11 24       	eor	r1, r1
-  e6:	2f 93       	push	r18
-  e8:	3f 93       	push	r19
-  ea:	4f 93       	push	r20
-  ec:	5f 93       	push	r21
-  ee:	6f 93       	push	r22
-  f0:	7f 93       	push	r23
-  f2:	8f 93       	push	r24
-  f4:	9f 93       	push	r25
-  f6:	af 93       	push	r26
-  f8:	bf 93       	push	r27
-  fa:	ef 93       	push	r30
-  fc:	ff 93       	push	r31
+  e8:	1f 92       	push	r1
+  ea:	0f 92       	push	r0
+  ec:	0f b6       	in	r0, 0x3f	; 63
+  ee:	0f 92       	push	r0
+  f0:	11 24       	eor	r1, r1
+  f2:	2f 93       	push	r18
+  f4:	3f 93       	push	r19
+  f6:	4f 93       	push	r20
+  f8:	5f 93       	push	r21
+  fa:	6f 93       	push	r22
+  fc:	7f 93       	push	r23
+  fe:	8f 93       	push	r24
+ 100:	9f 93       	push	r25
+ 102:	af 93       	push	r26
+ 104:	bf 93       	push	r27
+ 106:	ef 93       	push	r30
+ 108:	ff 93       	push	r31
 	valorADC = ADCH;
-  fe:	80 91 79 00 	lds	r24, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7f8079>
- 102:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
+ 10a:	80 91 79 00 	lds	r24, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7f8079>
+ 10e:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <__DATA_REGION_ORIGIN__>
 	DUT=DutyCycle(valorADC);
- 106:	0e 94 9f 00 	call	0x13e	; 0x13e <DutyCycle>
- 10a:	90 93 02 01 	sts	0x0102, r25	; 0x800102 <DUT+0x1>
- 10e:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <DUT>
+ 112:	0e 94 a5 00 	call	0x14a	; 0x14a <DutyCycle>
+ 116:	90 93 02 01 	sts	0x0102, r25	; 0x800102 <DUT+0x1>
+ 11a:	80 93 01 01 	sts	0x0101, r24	; 0x800101 <DUT>
 	//OCR1A=DUT;
 	ADCSRA |= (1<<ADSC);
- 112:	ea e7       	ldi	r30, 0x7A	; 122
- 114:	f0 e0       	ldi	r31, 0x00	; 0
- 116:	80 81       	ld	r24, Z
- 118:	80 64       	ori	r24, 0x40	; 64
- 11a:	80 83       	st	Z, r24
+ 11e:	ea e7       	ldi	r30, 0x7A	; 122
+ 120:	f0 e0       	ldi	r31, 0x00	; 0
+ 122:	80 81       	ld	r24, Z
+ 124:	80 64       	ori	r24, 0x40	; 64
+ 126:	80 83       	st	Z, r24
 }
- 11c:	ff 91       	pop	r31
- 11e:	ef 91       	pop	r30
- 120:	bf 91       	pop	r27
- 122:	af 91       	pop	r26
- 124:	9f 91       	pop	r25
- 126:	8f 91       	pop	r24
- 128:	7f 91       	pop	r23
- 12a:	6f 91       	pop	r22
- 12c:	5f 91       	pop	r21
- 12e:	4f 91       	pop	r20
- 130:	3f 91       	pop	r19
- 132:	2f 91       	pop	r18
- 134:	0f 90       	pop	r0
- 136:	0f be       	out	0x3f, r0	; 63
- 138:	0f 90       	pop	r0
- 13a:	1f 90       	pop	r1
- 13c:	18 95       	reti
+ 128:	ff 91       	pop	r31
+ 12a:	ef 91       	pop	r30
+ 12c:	bf 91       	pop	r27
+ 12e:	af 91       	pop	r26
+ 130:	9f 91       	pop	r25
+ 132:	8f 91       	pop	r24
+ 134:	7f 91       	pop	r23
+ 136:	6f 91       	pop	r22
+ 138:	5f 91       	pop	r21
+ 13a:	4f 91       	pop	r20
+ 13c:	3f 91       	pop	r19
+ 13e:	2f 91       	pop	r18
+ 140:	0f 90       	pop	r0
+ 142:	0f be       	out	0x3f, r0	; 63
+ 144:	0f 90       	pop	r0
+ 146:	1f 90       	pop	r1
+ 148:	18 95       	reti
 
-0000013e <DutyCycle>:
+0000014a <DutyCycle>:
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdint.h>
 
 int DutyCycle(uint8_t lec_ADC){
 	return (lec_ADC* 125UL /255UL + 125UL);
- 13e:	28 2f       	mov	r18, r24
- 140:	30 e0       	ldi	r19, 0x00	; 0
- 142:	ad e7       	ldi	r26, 0x7D	; 125
- 144:	b0 e0       	ldi	r27, 0x00	; 0
- 146:	0e 94 f0 00 	call	0x1e0	; 0x1e0 <__umulhisi3>
- 14a:	2f ef       	ldi	r18, 0xFF	; 255
+ 14a:	28 2f       	mov	r18, r24
  14c:	30 e0       	ldi	r19, 0x00	; 0
- 14e:	40 e0       	ldi	r20, 0x00	; 0
- 150:	50 e0       	ldi	r21, 0x00	; 0
- 152:	0e 94 ce 00 	call	0x19c	; 0x19c <__udivmodsi4>
+ 14e:	ad e7       	ldi	r26, 0x7D	; 125
+ 150:	b0 e0       	ldi	r27, 0x00	; 0
+ 152:	0e 94 f0 00 	call	0x1e0	; 0x1e0 <__umulhisi3>
+ 156:	2f ef       	ldi	r18, 0xFF	; 255
+ 158:	30 e0       	ldi	r19, 0x00	; 0
+ 15a:	40 e0       	ldi	r20, 0x00	; 0
+ 15c:	50 e0       	ldi	r21, 0x00	; 0
+ 15e:	0e 94 ce 00 	call	0x19c	; 0x19c <__udivmodsi4>
 }
- 156:	c9 01       	movw	r24, r18
- 158:	83 58       	subi	r24, 0x83	; 131
- 15a:	9f 4f       	sbci	r25, 0xFF	; 255
- 15c:	08 95       	ret
+ 162:	c9 01       	movw	r24, r18
+ 164:	83 58       	subi	r24, 0x83	; 131
+ 166:	9f 4f       	sbci	r25, 0xFF	; 255
+ 168:	08 95       	ret
 
-0000015e <initPWM1>:
+0000016a <initPWM1>:
 
 void initPWM1(){
 	TCCR1A = 0;
- 15e:	a0 e8       	ldi	r26, 0x80	; 128
- 160:	b0 e0       	ldi	r27, 0x00	; 0
- 162:	1c 92       	st	X, r1
+ 16a:	a0 e8       	ldi	r26, 0x80	; 128
+ 16c:	b0 e0       	ldi	r27, 0x00	; 0
+ 16e:	1c 92       	st	X, r1
 	TCCR1B = 0;
- 164:	e1 e8       	ldi	r30, 0x81	; 129
- 166:	f0 e0       	ldi	r31, 0x00	; 0
- 168:	10 82       	st	Z, r1
+ 170:	e1 e8       	ldi	r30, 0x81	; 129
+ 172:	f0 e0       	ldi	r31, 0x00	; 0
+ 174:	10 82       	st	Z, r1
 	TCCR1A |= (1<<COM1A1) ; //Modo non-invertido
- 16a:	8c 91       	ld	r24, X
- 16c:	80 68       	ori	r24, 0x80	; 128
- 16e:	8c 93       	st	X, r24
+ 176:	8c 91       	ld	r24, X
+ 178:	80 68       	ori	r24, 0x80	; 128
+ 17a:	8c 93       	st	X, r24
 	
 	//Modo FAST PWM con TOP en ICR1
 	TCCR1A |= (1<<WGM11);
- 170:	8c 91       	ld	r24, X
- 172:	82 60       	ori	r24, 0x02	; 2
- 174:	8c 93       	st	X, r24
+ 17c:	8c 91       	ld	r24, X
+ 17e:	82 60       	ori	r24, 0x02	; 2
+ 180:	8c 93       	st	X, r24
 	TCCR1B |= (1<<WGM12)|(1<<WGM13);
- 176:	80 81       	ld	r24, Z
- 178:	88 61       	ori	r24, 0x18	; 24
- 17a:	80 83       	st	Z, r24
+ 182:	80 81       	ld	r24, Z
+ 184:	88 61       	ori	r24, 0x18	; 24
+ 186:	80 83       	st	Z, r24
 	
 	TCCR1B |= (1<<CS11);	//Prescaler de 8
- 17c:	80 81       	ld	r24, Z
- 17e:	82 60       	ori	r24, 0x02	; 2
- 180:	80 83       	st	Z, r24
-	OCR1A=69;
- 182:	85 e4       	ldi	r24, 0x45	; 69
- 184:	90 e0       	ldi	r25, 0x00	; 0
- 186:	90 93 89 00 	sts	0x0089, r25	; 0x800089 <__TEXT_REGION_LENGTH__+0x7f8089>
- 18a:	80 93 88 00 	sts	0x0088, r24	; 0x800088 <__TEXT_REGION_LENGTH__+0x7f8088>
-	//OCR1A=300;
-	ICR1= 312; //TOP
- 18e:	88 e3       	ldi	r24, 0x38	; 56
- 190:	91 e0       	ldi	r25, 0x01	; 1
+ 188:	80 81       	ld	r24, Z
+ 18a:	82 60       	ori	r24, 0x02	; 2
+ 18c:	80 83       	st	Z, r24
+	
+	ICR1= 39999; //TOP
+ 18e:	8f e3       	ldi	r24, 0x3F	; 63
+ 190:	9c e9       	ldi	r25, 0x9C	; 156
  192:	90 93 87 00 	sts	0x0087, r25	; 0x800087 <__TEXT_REGION_LENGTH__+0x7f8087>
  196:	80 93 86 00 	sts	0x0086, r24	; 0x800086 <__TEXT_REGION_LENGTH__+0x7f8086>
  19a:	08 95       	ret
