@@ -15,16 +15,15 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdint.h>
+#include "PWM1/PWM1.h"
 
 //****Prototipo de funciones****
 void setup();
 void initADC();
-void initPWM1();
-int DutyCycle(uint8_t lec_ADC);
+
 
 uint8_t valorADC=0;
-uint8_t limit_inf=124;
-uint16_t rango=307;
+uint16_t DUT;
 
 int main()
 {
@@ -38,10 +37,11 @@ int main()
 //************Funciones************
 void setup(){
 	cli();
-	CLKPR = (1<< CLKPCE);
-	CLKPR |= (1<<CLKPS2);	//1Mhz
+	//CLKPR = (1<< CLKPCE);
+	//CLKPR |= (1<<CLKPS2);	//1Mhz
 	DDRB |= (1 << PORTB1);	//PB1 como salida
-		
+	PORTB= 0x00;	
+	
 	UCSR0B = 0;				//Comunicación serial
 	initADC();
 	initPWM1();
@@ -57,30 +57,15 @@ void initADC(){
 	ADCSRA |= (1<<ADSC); //Iniciar conversión
 }
 
-void initPWM1(){				
-	TCCR1A = 0;
-	TCCR1B = 0;
-	TCCR1A |= (1<<COM1A1) ; //Modo non-invertido
-	
-	//Modo FAST PWM con TOP en ICR1
-	TCCR1A |= (1<<WGM11);
-	TCCR1B |= (1<<WGM12)|(1<<WGM13);
-	
-	TCCR1B |= (1<<CS11);	//Prescaler de 8
-	
-	ICR1= 2499; //TOP
-	OCR1A = 124;	//Duty cycle 5%
-}
 
-int DutyCycle(uint8_t lec_ADC){
-	return (lec_ADC*125UL/255+limit_inf);
-}
+
 
 //************Interrupciones************
-/*
+
 ISR(ADC_vect){
 	valorADC = ADCH;
-	OCR1A=DutyCycle(valorADC);
+	DUT=DutyCycle(valorADC);
+	OCR1A=DUT;
 	ADCSRA |= (1<<ADSC);
+	_delay_ms(1);
 }
-*/
