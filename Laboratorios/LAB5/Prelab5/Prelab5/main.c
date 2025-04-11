@@ -37,10 +37,10 @@ int main()
 //************Funciones************
 void setup(){
 	cli();
-	//CLKPR = (1<< CLKPCE);
-	//CLKPR |= (1<<CLKPS2);	//1Mhz
+	CLKPR = (1<< CLKPCE);
+	CLKPR |= (1<<CLKPS2);	//1Mhz
 	DDRB |= (1 << PORTB1);	//PB1 como salida
-	PORTB= 0x00;	
+		
 	
 	UCSR0B = 0;				//Comunicación serial
 	initADC();
@@ -65,7 +65,6 @@ void initADC(){
 ISR(ADC_vect){
 	valorADC = ADCH;
 	DUT=DutyCycle(valorADC);
-	OCR1A=DUT;
+	//OCR1A=DUT;
 	ADCSRA |= (1<<ADSC);
-	_delay_ms(1);
 }
