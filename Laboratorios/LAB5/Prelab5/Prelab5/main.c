@@ -23,7 +23,7 @@ void initPWM1();
 int DutyCycle(uint8_t lec_ADC);
 
 uint8_t valorADC=0;
-uint8_t limit_inf=101;
+uint8_t limit_inf=124;
 uint16_t rango=307;
 
 int main()
@@ -61,16 +61,19 @@ void initPWM1(){
 	TCCR1A = 0;
 	TCCR1B = 0;
 	TCCR1A |= (1<<COM1A1) ; //Modo non-invertido
+	
 	//Modo FAST PWM con TOP en ICR1
 	TCCR1A |= (1<<WGM11);
 	TCCR1B |= (1<<WGM12)|(1<<WGM13);
+	
 	TCCR1B |= (1<<CS11);	//Prescaler de 8
+	
 	ICR1= 2499; //TOP
-	OCR1A = 62;	//Duty cycle 2.5%
+	OCR1A = 124;	//Duty cycle 5%
 }
 
 int DutyCycle(uint8_t lec_ADC){
-	return (lec_ADC*307UL/255+limit_inf);
+	return (lec_ADC*125UL/255+limit_inf);
 }
 
 //************Interrupciones************
@@ -79,4 +82,5 @@ ISR(ADC_vect){
 	valorADC = ADCH;
 	OCR1A=DutyCycle(valorADC);
 	ADCSRA |= (1<<ADSC);
-}*/
+}
+*/
