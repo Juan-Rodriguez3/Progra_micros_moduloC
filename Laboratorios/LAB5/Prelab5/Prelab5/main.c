@@ -8,64 +8,60 @@
 // Creado: 11/04/2025
 //******************************************************************************
 
-
-#define F_CPU 16000000
+#define F_CPU 16000000UL
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdint.h>
-#include "PWM1/PWM1.h"
+#include "PWM1//PWM1.h"
 
 //****Prototipo de funciones****
 void setup();
 void initADC();
+uint16_t DutyCycle(uint8_t lec_ADC);
 
-
-uint8_t valorADC=0;
-uint16_t DUT;
+//****Variables globales****
+volatile uint8_t valorADC = 0;
+volatile uint16_t DUT = 0;
 
 int main()
 {
     setup();
-	
+    
     while (1) 
     {
-		//OCR1A=4995;
-		OCR1A=1005;
+        _delay_ms(10);  // Pequeño retardo para estabilidad
     }
 }
+
 //************Funciones************
 void setup(){
-	cli();
-	CLKPR = (1<< CLKPCE);
-	CLKPR |= (1<<CLKPS2);	//1Mhz
-	DDRB |= (1 << PORTB1);	//PB1 como salida
-		
-	
-	UCSR0B = 0;				//Comunicación serial
-	initADC();
-	initPWM1();
-	sei();
+    cli();
+    //CLKPR = (1<< CLKPCE);
+    //CLKPR |= (1<<CLKPS2);    //1Mhz
+    
+    UCSR0B = 0;                //Comunicación serial
+    initADC();
+    initPWM1();
+    sei();
 }
 
 void initADC(){
-	ADMUX = 0;
-	ADMUX |= (1<<REFS0)|(1<<ADLAR);	// 5V de referencia - Justificación a la izquierda
-	
-	ADCSRA = 0;
-	ADCSRA |= (1<<ADEN)|(1<<ADIE)|(1<<ADPS1)|(1<<ADPS0); //Habilitación de ADC y interrupción - Prescaler para 125 Khz 
-	ADCSRA |= (1<<ADSC); //Iniciar conversión
+    ADMUX = 1;
+    ADMUX |= (1<<REFS0)|(1<<ADLAR);    // 5V de referencia - Justificación a la izquierda
+    
+    ADCSRA = 0;
+    ADCSRA |= (1<<ADEN)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); //Prescaler 128
+    ADCSRA |= (1<<ADSC); //Iniciar conversión
 }
-
 
 
 
 //************Interrupciones************
-
 ISR(ADC_vect){
-	valorADC = ADCH;
-	DUT=DutyCycle(valorADC);
-	//OCR1A=DUT;
-	ADCSRA |= (1<<ADSC);
+    valorADC = ADCH;        // Leemos solo ADCH por justificación izquierda
+    DUT = DutyCycle(valorADC);
+    OCR1B = DUT;            // Actualizamos el duty cycle
+    ADCSRA |= (1<<ADSC);    // Iniciamos nueva conversión
 }

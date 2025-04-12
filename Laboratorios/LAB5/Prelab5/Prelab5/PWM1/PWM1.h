@@ -10,7 +10,7 @@
 #define PWM1_H_
 
 void initPWM1();
-int DutyCycle(uint8_t lec_ADC);
+uint16_t DutyCycle(uint8_t lec_ADC);
 
 
 
