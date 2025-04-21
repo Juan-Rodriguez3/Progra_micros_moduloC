@@ -25,9 +25,9 @@ void setup();
 //****Variables globales****
 uint8_t  compare=0;
 uint8_t	 inv=0;
-uint16_t prescaler=1024;
+uint16_t prescaler=8;
 uint8_t mode=14;
-uint16_t periodo= 312;
+uint16_t periodo= 39999;
 volatile uint8_t valorADC = 0;
 volatile uint16_t DUT = 0;
 

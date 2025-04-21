@@ -15,7 +15,7 @@ uint16_t DutyCycle(uint8_t lec_ADC){
 	return (1010UL + lec_ADC * (4000UL/255));
 }
 
-void initPWM1(/uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, uint16_t periodo) {
+void initPWM1(uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, uint16_t periodo) {
 	TCCR1A = 0;
 	TCCR1B = 0;
 	DDRB = 0;
@@ -23,7 +23,6 @@ void initPWM1(/uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, u
 	
 	//OCR1B
 	if (compare==0){
-		DDRB = (1 << DDB2);
 		if (inv==0) {
 			TCCR1A |= (1<<COM1B1);	//No invertido
 		}
@@ -33,7 +32,6 @@ void initPWM1(/uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, u
 	}
 	//OCR1A
 	else {
-		DDRB = (1 << DDB1);
 		if (inv==0) {
 			TCCR1A |= (1<<COM1A1);
 		}
@@ -138,8 +136,9 @@ void initPWM1(/uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, u
 	// Prescaler de 1024 (Frecuencia PWM = 50Hz)
 	TCCR1B |= (1<<CS11);
 	//OCR1B =1010;
-	//OCR1B =4990;
-	ICR1 = 39999;   // TOP value para 50Hz
-	*/
+	//OCR1B =4990;*/
+	
+	ICR1 = periodo;   // TOP value para 50Hz
+	
 	DDRB |= (1 << DDB2)|(1 << DDB3)|(1 << DDB1);  // Configura PB2 (OC1B) como salida
 }
