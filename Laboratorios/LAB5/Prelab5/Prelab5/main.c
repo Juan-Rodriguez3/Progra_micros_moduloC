@@ -19,15 +19,15 @@
 
 //****Prototipo de funciones****
 void setup();
-void initADC();
+//void init_ADC();
 
 
 //****Variables globales****
-volatile uint8_t  compare=0;
-volatile uint8_t	 inv=0;
-volatile uint16_t prescaler=8;
-volatile uint8_t modo=14;
-volatile uint16_t periodo= 39999;
+uint8_t  compare=0;
+uint8_t	 inv=0;
+uint16_t prescaler=1024;
+uint8_t mode=14;
+uint16_t periodo= 312;
 volatile uint8_t valorADC = 0;
 volatile uint16_t DUT = 0;
 
@@ -37,13 +37,15 @@ int main()
     
     while (1) 
     {
-		 DUT = DutyCycle(valorADC);
-		 OCR1B = DUT;            // Actualizamos el duty cycle
+		DUT = DutyCycle(valorADC);
+		OCR1B = DUT;            // Actualizamos el duty cycle
         _delay_ms(10);  // Pequeño retardo para estabilidad
     }
 }
 
 //************Funciones************
+
+
 void setup(){
     cli();
     //CLKPR = (1<< CLKPCE);
@@ -55,19 +57,23 @@ void setup(){
 	DDRC=0x00;
 	PORTC=0x00;
 	
-    initADC();
-    initPWM1(compare, inv, modo, prescaler, periodo);
+   // init_ADC();
+   ADC_init();
+    initPWM1(compare, inv, mode, prescaler, periodo);
     sei();
 }
 
+/*
 void init_ADC(){
-	ADMUX = 0;							//Canal del ADC
-	ADMUX |= (1<<REFS0)|(1<<ADLAR)|(1<<MUX1);    // 5V de referencia - Justificación a la izquierda
+	ADMUX = 0;							
+	ADMUX |= (1<<REFS0)|(1<<ADLAR);    // 5V de referencia - Justificación a la izquierda - canal 0
 	
 	ADCSRA = 0;
 	ADCSRA |= (1<<ADEN)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); //Interrupciones - Prescaler 128
 	ADCSRA |= (1<<ADSC); //Iniciar conversión
 }
+*/
+
 
 //************Interrupciones************
 ISR(ADC_vect){

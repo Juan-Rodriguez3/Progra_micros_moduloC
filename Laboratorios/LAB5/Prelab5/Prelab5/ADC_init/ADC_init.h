@@ -6,10 +6,10 @@
  */ 
 
 
-#ifndef INCFILE1_H_
-#define INCFILE1_H_
+#ifndef ADC_init_H_
+#define ADC_init_H_
 
-void initADC();
+void ADC_init();
 
 
 
