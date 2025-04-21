@@ -9,7 +9,7 @@
 #ifndef PWM1_H_
 #define PWM1_H_
 
-void initPWM1();
+void initPWM1(uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, uint16_t periodo);
 uint16_t DutyCycle(uint8_t lec_ADC);
 
 
