@@ -12,14 +12,33 @@
 #include <stdint.h>
 
 uint16_t DutyCycle(uint8_t lec_ADC){
-	
-	return (1000 + lec_ADC * 4000UL / 1023);
+	return (1000UL + lec_ADC * (4000UL /255));
 }
 
-void initPWM1() {
+void initPWM1(uint8_t compare, uint8_t inv, uint8_t mode, uint8_t prescaler) {
 	TCCR1A = 0;
 	TCCR1B = 0;
 	
+	switch  (compare){
+		case 0:
+		if (~inv) {
+			TCCR1A |= (1<<COM1B1)
+		}
+		else {
+			TCCR1A |= (1<<COM1B1) | (1<<COM1B0)
+		}
+		break;
+		
+		//Por default se usara el OCR1A
+		default:
+		if (~inv) {
+			TCCR1A |= (1<<COM1A1)
+		}
+		else {
+			TCCR1A |= (1<<COM1A1) | (1<<COM1A0)
+		}
+		break;
+	}
 	// Configuración para PWM en OC1B (PB2)
 	TCCR1A |= (1 << COM1B1);  // PWM no-invertido
 	
