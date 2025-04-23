@@ -23,13 +23,12 @@ void setup();
 
 
 //****Variables globales****
-uint8_t canal_ADC=1;	// =0 --> D10/OC1B - !=0 --> D9/OC1A		
 uint16_t prescaler_PWM=8;
 uint8_t prescaler_ADC=128;
 uint8_t mode_PWM=14;
 uint16_t periodo= 39999;
 
-
+volatile uint8_t canal_ADC=0;	// =0 --> D10/OC1B - !=0 --> D9/OC1A
 volatile uint8_t valorADC = 0;
 volatile uint16_t DUT = 0;
 
@@ -39,8 +38,17 @@ int main()
     
     while (1) 
     {
+		canal_ADC=1;
 		ADC_init(1,5,canal_ADC,1,prescaler_ADC);
-        _delay_ms(2);  // Pequeño retardo para estabilidad
+		initPWM1(canal_ADC, 0, mode_PWM, prescaler_PWM, periodo);
+       _delay_ms(500);  // Pequeño retardo para estabilidad
+		
+		
+		canal_ADC=0;
+		ADC_init(1,5,canal_ADC,1,prescaler_ADC);
+		initPWM1(canal_ADC, 0, mode_PWM, prescaler_PWM, periodo);
+		_delay_ms(500);  // Pequeño retardo para estabilidad
+		
     }
 }
 
@@ -58,8 +66,8 @@ void setup(){
 	DDRC=0x00;
 	PORTC=0x00;
 	
-   // init_ADC();
-   initPWM1(0, 0, mode_PWM, prescaler_PWM, periodo);
+
+
     sei();
 }
 
@@ -70,9 +78,19 @@ ISR(ADC_vect){
 	//Actualizamos el valor del Dutty cycle
     valorADC = ADCH;        // Leemos solo ADCH por justificación izquierda
 	DUT = DutyCycle(valorADC);
-	OCR1B = DUT;            // Actualizamos el duty cycle
-	OCR1A = DUT;
-	//Actualizamos el comparador/canal del PWM
+	switch(canal_ADC){
+		case 0:
+		OCR1B = DUT;            // Actualizamos el duty cycle 
+		break;
+		case 1:
+		OCR1A = DUT;			// Actualizamos el duty cycle
+		break;
+		default:
+		break;
+	}
+	
+	
+	
 	
 	
 	//Iniciamos la conversión 
