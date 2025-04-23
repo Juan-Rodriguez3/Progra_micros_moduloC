@@ -39,6 +39,16 @@ void initPWM1(uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, ui
 			TCCR1A |= (1<<COM1A1) | (1<<COM1A0);
 		}
 	}
+	//Esta es util para inicializar el timer1 con las dos señales PWM 
+	else if (compare==2){
+		if (inv==0) {
+			TCCR1A |= (1<<COM1A1)|(1<<COM1B1);
+		}
+		else {
+			TCCR1A |= (1<<COM1A1) | (1<<COM1A0)|(1<<COM1B1) | (1<<COM1B0);
+		}
+	}
+	
 	
 	
 	switch (mode)
