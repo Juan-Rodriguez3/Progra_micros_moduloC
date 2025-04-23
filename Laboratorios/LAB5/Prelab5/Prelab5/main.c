@@ -55,7 +55,7 @@ void setup(){
 	//Puerto C como entrada y pullup deshabilitado.
 	DDRC=0x00;
 	PORTC=0x00;
-	initPWM1(1, 0, mode_PWM, prescaler_PWM, periodo);
+	initPWM1(2, 0, mode_PWM, prescaler_PWM, periodo);
 	ADC_init(1,5,canal_ADC,1,prescaler_ADC);
 
     sei();
@@ -70,7 +70,8 @@ ISR(ADC_vect){
 	DUT = DutyCycle(valorADC);
 	switch(canal_ADC){
 		case 0:
-		OCR1B = DUT;            // Actualizamos el duty cycle 
+		OCR1B = DUT;            // Actualizamos el duty cycle
+		//OCR1A = DUT;      //Para probar si servía el configurar ambas salidas de PWM
 		break;
 		case 1:
 		OCR1A = DUT;			// Actualizamos el duty cycle
@@ -79,13 +80,14 @@ ISR(ADC_vect){
 		break;
 	}
 	
-	
-	if (canal_ADC>1){
+	//Multiplexeo de canales de ADC para la proxuma lectura.
+	if (canal_ADC>=1){
 		canal_ADC=0;
 	}
 	else {
 		canal_ADC++;
 	}
 	
+	//Reconfiguracion del ADC
 	ADC_init(1,5,canal_ADC,1,prescaler_ADC);
 }
