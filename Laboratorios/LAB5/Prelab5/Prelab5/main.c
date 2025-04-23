@@ -23,8 +23,7 @@ void setup();
 
 
 //****Variables globales****
-uint8_t canal=0;
-uint8_t channel_PWM=0;				// =0 --> D10/OC1B - !=0 --> D9/OC1A
+uint8_t canal_ADC=1;	// =0 --> D10/OC1B - !=0 --> D9/OC1A		
 uint16_t prescaler_PWM=8;
 uint8_t prescaler_ADC=128;
 uint8_t mode_PWM=14;
@@ -40,7 +39,7 @@ int main()
     
     while (1) 
     {
-		ADC_init(1,5,canal,1,prescaler_ADC);
+		ADC_init(1,5,canal_ADC,1,prescaler_ADC);
         _delay_ms(2);  // Pequeño retardo para estabilidad
     }
 }
@@ -60,20 +59,9 @@ void setup(){
 	PORTC=0x00;
 	
    // init_ADC();
-   initPWM1(channel_PWM, 0, mode_PWM, prescaler_PWM, periodo);
+   initPWM1(0, 0, mode_PWM, prescaler_PWM, periodo);
     sei();
 }
-
-/*
-void init_ADC(){
-	ADMUX = 0;							
-	ADMUX |= (1<<REFS0)|(1<<ADLAR);    // 5V de referencia - Justificación a la izquierda - canal 0
-	
-	ADCSRA = 0;
-	ADCSRA |= (1<<ADEN)|(1<<ADIE)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0); //Interrupciones - Prescaler 128
-	ADCSRA |= (1<<ADSC); //Iniciar conversión
-}
-*/
 
 
 //************Interrupciones************
@@ -83,7 +71,7 @@ ISR(ADC_vect){
     valorADC = ADCH;        // Leemos solo ADCH por justificación izquierda
 	DUT = DutyCycle(valorADC);
 	OCR1B = DUT;            // Actualizamos el duty cycle
-	
+	OCR1A = DUT;
 	//Actualizamos el comparador/canal del PWM
 	
 	

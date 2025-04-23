@@ -31,7 +31,7 @@ void initPWM1(uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, ui
 		}
 	}
 	//OCR1A
-	else {
+	else if (compare==1) {
 		if (inv==0) {
 			TCCR1A |= (1<<COM1A1);
 		}
