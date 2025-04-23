@@ -38,17 +38,7 @@ int main()
     
     while (1) 
     {
-		canal_ADC=1;
-		ADC_init(1,5,canal_ADC,1,prescaler_ADC);
-		initPWM1(canal_ADC, 0, mode_PWM, prescaler_PWM, periodo);
-       _delay_ms(500);  // Pequeño retardo para estabilidad
-		
-		
-		canal_ADC=0;
-		ADC_init(1,5,canal_ADC,1,prescaler_ADC);
-		initPWM1(canal_ADC, 0, mode_PWM, prescaler_PWM, periodo);
-		_delay_ms(500);  // Pequeño retardo para estabilidad
-		
+       _delay_ms(1);  // Pequeño retardo para estabilidad	
     }
 }
 
@@ -65,8 +55,8 @@ void setup(){
 	//Puerto C como entrada y pullup deshabilitado.
 	DDRC=0x00;
 	PORTC=0x00;
-	
-
+	initPWM1(1, 0, mode_PWM, prescaler_PWM, periodo);
+	ADC_init(1,5,canal_ADC,1,prescaler_ADC);
 
     sei();
 }
@@ -90,9 +80,12 @@ ISR(ADC_vect){
 	}
 	
 	
+	if (canal_ADC>1){
+		canal_ADC=0;
+	}
+	else {
+		canal_ADC++;
+	}
 	
-	
-	
-	//Iniciamos la conversión 
-    ADCSRA |= (1<<ADSC);    // Iniciamos nueva conversión
+	ADC_init(1,5,canal_ADC,1,prescaler_ADC);
 }
