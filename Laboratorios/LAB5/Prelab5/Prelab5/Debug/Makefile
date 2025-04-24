@@ -34,6 +34,7 @@ LINKER_SCRIPT_DEP:=
 # Every subdirectory with source files must be described here
 SUBDIRS :=  \
 ../ADC_init \
+../Timer0 \
 ../PWM1
 
 
@@ -41,7 +42,8 @@ SUBDIRS :=  \
 C_SRCS +=  \
 ../ADC_init/ADC_init.c \
 ../main.c \
-../PWM1/PWM1.c
+../PWM1/PWM1.c \
+../Timer0/init_TIMER0.c
 
 
 PREPROCESSING_SRCS += 
@@ -53,22 +55,26 @@ ASM_SRCS +=
 OBJS +=  \
 ADC_init/ADC_init.o \
 main.o \
-PWM1/PWM1.o
+PWM1/PWM1.o \
+Timer0/init_TIMER0.o
 
 OBJS_AS_ARGS +=  \
 ADC_init/ADC_init.o \
 main.o \
-PWM1/PWM1.o
+PWM1/PWM1.o \
+Timer0/init_TIMER0.o
 
 C_DEPS +=  \
 ADC_init/ADC_init.d \
 main.d \
-PWM1/PWM1.d
+PWM1/PWM1.d \
+Timer0/init_TIMER0.d
 
 C_DEPS_AS_ARGS +=  \
 ADC_init/ADC_init.d \
 main.d \
-PWM1/PWM1.d
+PWM1/PWM1.d \
+Timer0/init_TIMER0.d
 
 OUTPUT_FILE_PATH +=Prelab5.elf
 
@@ -99,6 +105,13 @@ ADC_init/ADC_init.o: ../ADC_init/ADC_init.c
 	
 
 PWM1/PWM1.o: ../PWM1/PWM1.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+Timer0/init_TIMER0.o: ../Timer0/init_TIMER0.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

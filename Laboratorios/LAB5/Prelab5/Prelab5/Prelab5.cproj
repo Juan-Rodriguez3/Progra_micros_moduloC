@@ -135,9 +135,16 @@
     <Compile Include="PWM1\PWM1.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Timer0\init_TIMER0.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Timer0\init_TIMER0.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ADC_init" />
+    <Folder Include="Timer0" />
     <Folder Include="PWM1" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

@@ -59,7 +59,6 @@ void ADC_init(uint8_t justi, uint8_t V_ref, uint8_t canal, uint8_t interrupt, ui
 		ADMUX |= (1<<MUX2)|(1<<MUX1);
 		break;
 	}
-		//ADMUX |= (1<<REFS0)|(1<<ADLAR);    // 5V de referencia - Justificación a la izquierda - canal 0
 	
 	ADCSRA = 0;
 	if (!interrupt){
