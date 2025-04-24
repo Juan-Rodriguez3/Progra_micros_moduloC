@@ -63,5 +63,8 @@ uint8_t DutyCycle_LED(uint8_t lec_ADC){
 	return (lec_ADC);	//No hay necesidad de mapeo debido
 	//La lectura se encontrar entre 0-255 
 	//Como se realizara un PWM manual se define un periodo. En mi caso 20 ms.
-	//
+	//Se calcula el t_delay deseado para obtener el periodo de 20 ms mapeado en un rango de valores entre 0-255
+	// t_delay= 20ms/255
+	//Se calcula TCNT0 en función al tiempo delay.
+	//Con esto podemos utilizar la lectura del ADC directamente	
 }

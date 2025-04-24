@@ -43,12 +43,13 @@ int main()
     setup();
     while (1)
     {
+		//El contador aumenta cada 0.08 ms 
 		if (contador_led<DUT_LED){
 			PORTB |= (1<<PORTB3);
 		}
 		else if (contador_led>=DUT_LED){
 			PORTB &= ~(1<<PORTB3);
-		}
+		}	
        _delay_ms(1);  // Pequeño retardo para estabilidad
 	   
     }
@@ -75,7 +76,7 @@ void setup(){
 	initPWM1(comparador, OFF, mode_PWM, prescaler_PWM, periodo);
 	ADC_init(ON, Vref_5V,canal_ADC,ON,prescaler_ADC);
 	//F_cpu 16MHz y prescaler de 8
-	init_TIMER0(prescaler_TIMER0, T0_value, OFF, ON);				//Interrupción cada 0.10 ms --> periodo = 0.08 ms *255 = 20 ms
+	init_TIMER0(prescaler_TIMER0, T0_value, OFF, ON);				//Interrupción cada 0.08 ms --> periodo = 0.08 ms *255 = 20 ms
 	TCNT0=0;
     sei();
 }
@@ -116,7 +117,7 @@ ISR(ADC_vect){
 }
 
 ISR(TIMER0_OVF_vect){
-	contador_led++;
+	contador_led++;  
 	if (contador_led==255){
 		contador_led=0;	//Reiniciamos el contador.
 	}
