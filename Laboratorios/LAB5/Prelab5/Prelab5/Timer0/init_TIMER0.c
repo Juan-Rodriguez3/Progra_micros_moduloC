@@ -60,5 +60,8 @@ void init_TIMER0(uint16_t prescaler, uint8_t contador, uint8_t mode, uint8_t int
 }
 
 uint8_t DutyCycle_LED(uint8_t lec_ADC){
-	return (lec_ADC);
+	return (lec_ADC);	//No hay necesidad de mapeo debido
+	//La lectura se encontrar entre 0-255 
+	//Como se realizara un PWM manual se define un periodo. En mi caso 20 ms.
+	//
 }

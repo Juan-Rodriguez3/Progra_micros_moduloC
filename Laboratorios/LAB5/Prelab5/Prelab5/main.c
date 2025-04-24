@@ -8,7 +8,7 @@
 // Creado: 11/04/2025
 //******************************************************************************
 
-//Librerías
+//Librerías y definiciones
 #define F_CPU 16000000UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -87,6 +87,8 @@ ISR(ADC_vect){
 	//Actualizamos el valor del Dutty cycle
     valorADC = ADCH;        // Leemos solo ADCH por justificación izquierda
 	DUT = DutyCycle(valorADC);
+	
+	//Actualizamos el DutyCycle dependiendo de que canal se haya leido
 	switch(canal_ADC){
 		case 0:
 		OCR1B = DUT;            // Actualizamos el duty cycle
@@ -106,7 +108,7 @@ ISR(ADC_vect){
 		canal_ADC=0;
 	}
 	else {
-		canal_ADC++;
+		canal_ADC++;	//pasamos al siguiente canal
 	}
 	
 	//Reconfiguracion del ADC

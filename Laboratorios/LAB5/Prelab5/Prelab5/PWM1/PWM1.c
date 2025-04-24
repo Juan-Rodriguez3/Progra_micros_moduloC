@@ -12,7 +12,11 @@
 #include <stdint.h>
 
 uint16_t DutyCycle(uint8_t lec_ADC){
-	return (1010UL + lec_ADC * (4000UL/255));
+	return (1010UL + lec_ADC * (4000UL/255));  //Mapeo para el dutycycle del PWM
+	//Para la posición 0° --> OCR1x = 1000
+	//Para la posición 180° --> OCR1x = 5000
+	//Diferencia/rango permitido 4000
+	//Se realiza una razón entre la lectura y el valor maximo de la lectrua y se multiplica con el rango permitido
 }
 
 	void initPWM1(uint8_t compare, uint8_t inv, uint8_t mode, uint16_t prescaler, uint16_t periodo) {
@@ -31,7 +35,7 @@ uint16_t DutyCycle(uint8_t lec_ADC){
 		//OCR1A
 		else if (compare==1) {
 			if (inv==0) {
-				TCCR1A |= (1<<COM1A1);
+				TCCR1A |= (1<<COM1A1); //No invertido
 			}
 			else {
 				TCCR1A |= (1<<COM1A1) | (1<<COM1A0);
@@ -40,7 +44,7 @@ uint16_t DutyCycle(uint8_t lec_ADC){
 		//Esta es util para inicializar el timer1 con las dos señales PWM 
 		else if (compare==2){
 			if (inv==0) {
-				TCCR1A |= (1<<COM1A1)|(1<<COM1B1);
+				TCCR1A |= (1<<COM1A1)|(1<<COM1B1); //No invertido
 			}
 			else {
 				TCCR1A |= (1<<COM1A1) | (1<<COM1A0)|(1<<COM1B1) | (1<<COM1B0);
