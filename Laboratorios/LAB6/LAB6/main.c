@@ -15,6 +15,7 @@
 /*********Librerias*********/
 void setup(void);
 void initUART(void);
+void writeChar(char texto);
 
 /*********Prototipos de funciones*********/
 
@@ -24,10 +25,10 @@ void initUART(void);
 /*********main*********/
 int main(void)
 {
-    setup(void);
+    setup();
     while (1) 
     {
-		
+		writeChar('k');
     }
 }
 /*********main*********/
@@ -36,7 +37,7 @@ int main(void)
 /*********Subrutinas NON Interrupts*********/
 void setup(void){
 	cli();
-	initUART(void);
+	initUART();
 	sei();
 }
 
@@ -44,10 +45,18 @@ void initUART(void){
 	//Configurar los pines PD1 Tx y PD0 Rx
 	DDRD=0;
 	DDRD |= (1<<PORTD1);	//PD1 única salida
-	UCSR0A = 0;
-	UCSR0B = 0;
+	UCSR0A = 0;		//No se utiliza doble speed. 
+	UCSR0B = 0;		
+	UCSR0B |= (1<<RXCIE0)|(1<<RXEN0)|(1<<TXEN0);  //Habilitamos interrupciones al recibir, habilitar recepción y transmisión
 	UCSR0C = 0;
+	UCSR0C |= (1<<UCSZ00)|(1<<UCSZ01);	//Asincrono, deshabilitado el bit de paridad, un stop bit, 8 bits de datos. 
+	UBRR0=103;	//UBBRR0=103; -> 9600 con frecuencia de 16MHz
 	
+}
+
+void writeChar(char texto){
+	while ((UCSR0A & (1<<UDRIE0))==0);	//Esperamos a que el registro de datos de USART este vacío
+	UDR0= texto;
 }
 
 /*********Subrutinas NON Interrupts*********/
