@@ -11,11 +11,13 @@
 #define F_CPU 16000000UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
+uint8_t mask_data = 0;
 	
 /*********Librerias*********/
 void setup(void);
 void initUART(void);
-void writeChar(char texto);
+void write(char texto);
 
 /*********Prototipos de funciones*********/
 
@@ -26,17 +28,17 @@ void writeChar(char texto);
 int main(void)
 {
     setup();
-	writeChar('l');
-	writeChar('e');
-	writeChar('e');
-	writeChar('r');
-	writeChar(' ');
-	writeChar('e');
-	writeChar('l');
-	writeChar(' ');
-	writeChar('P');
-	writeChar('O');
-	writeChar('T');
+	write('l');
+	write('e');
+	write('e');
+	write('r');
+	write(' ');
+	write('e');
+	write('l');
+	write(' ');
+	write('P');
+	write('O');
+	write('T');
 	
 	
     while (1) 
@@ -57,7 +59,8 @@ void setup(void){
 void initUART(void){
 	//Configurar los pines PD1 Tx y PD0 Rx
 	DDRD=0;
-	DDRD |= (1<<PORTD1);	//PD1 única salida
+	DDRD |= (1<<PORTD1)|(1<<PORTD7)|(1<<PORTD6);	//PD1 única salida
+	PORTD= 0;
 	UCSR0A = 0;		//No se utiliza doble speed. 
 	UCSR0B = 0;		
 	UCSR0B |= (1<<RXCIE0)|(1<<RXEN0)|(1<<TXEN0);  //Habilitamos interrupciones al recibir, habilitar recepción y transmisión
@@ -65,9 +68,15 @@ void initUART(void){
 	UCSR0C |= (1<<UCSZ00)|(1<<UCSZ01);	//Asincrono, deshabilitado el bit de paridad, un stop bit, 8 bits de datos. 
 	UBRR0=103;	//UBBRR0=103; -> 9600 con frecuencia de 16MHz
 	
+	//Configuración de PORTB
+	DDRB =0;
+	DDRB |= 0xFF; //PORTB como salida
+	PORTB =0;
+	
+	
 }
 
-void writeChar(char texto){
+void write(char texto){
 	while ((UCSR0A & (1<<UDRIE0))==0);	//Esperamos a que el registro de datos de USART este vacío
 	UDR0= texto;
 }
@@ -76,6 +85,15 @@ void writeChar(char texto){
 
 
 /*********Subrutinas Interrupts*********/
-
+ISR(USART_RX_vect) {
+	char dato = UDR0;
+	write(dato);
+	mask_data = (dato&0b00111111);	//Limpiamos los bits mas significativos
+	PORTB = mask_data;
+	mask_data = (dato&~(0b00111111));	//dejamos los bits mas significativos
+	PORTD &= ~(0b00111111);				//Limpiamos los bits mas significativos del Puerto D
+	PORTD |= mask_data;					//Cargamos el nuevo valor
+	
+}
 /*********Subrutinas NON Interrupts*********/
 
