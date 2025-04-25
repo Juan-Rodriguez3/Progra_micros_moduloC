@@ -18,6 +18,7 @@ uint8_t mask_data = 0;
 void setup(void);
 void initUART(void);
 void write(char texto);
+void writeString(char* texto);
 
 /*********Prototipos de funciones*********/
 
@@ -39,8 +40,7 @@ int main(void)
 	write('P');
 	write('O');
 	write('T');
-	
-	
+	writeString(" Se me quemo el nano\n");
     while (1) 
     {
 		
@@ -81,6 +81,14 @@ void write(char texto){
 	UDR0= texto;
 }
 
+void writeString(char* texto){
+	for(uint8_t i = 0; *(texto+i) !='\0'; i++)
+	{
+		write(*(texto+i));
+	}
+	
+}
+
 /*********Subrutinas NON Interrupts*********/
 
 
@@ -88,10 +96,12 @@ void write(char texto){
 ISR(USART_RX_vect) {
 	char dato = UDR0;
 	write(dato);
-	mask_data = (dato&0b00111111);	//Limpiamos los bits mas significativos
+	mask_data = (dato & 0b00111111);	//Limpiamos los bits mas significativos
 	PORTB = mask_data;
-	mask_data = (dato&~(0b00111111));	//dejamos los bits mas significativos
-	PORTD &= ~(0b00111111);				//Limpiamos los bits mas significativos del Puerto D
+	
+	mask_data = (dato & 0b11000000);	//dejamos los bits mas significativos
+	
+	PORTD &= (0b00111111);				//Limpiamos los bits mas significativos del Puerto D
 	PORTD |= mask_data;					//Cargamos el nuevo valor
 	
 }
