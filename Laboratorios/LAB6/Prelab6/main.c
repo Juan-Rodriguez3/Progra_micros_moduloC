@@ -91,7 +91,7 @@ ISR(USART_RX_vect) {
 	mask_data = (dato&0b00111111);	//Limpiamos los bits mas significativos
 	PORTB = mask_data;
 	mask_data = (dato&~(0b00111111));	//dejamos los bits mas significativos
-	PORTD &= ~(0b00111111);				//Limpiamos los bits mas significativos del Puerto D
+	PORTD &= (0b00111111);				//Limpiamos los bits mas significativos del Puerto D
 	PORTD |= mask_data;					//Cargamos el nuevo valor
 	
 }
