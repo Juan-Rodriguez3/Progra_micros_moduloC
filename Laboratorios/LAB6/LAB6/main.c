@@ -26,9 +26,22 @@ void writeChar(char texto);
 int main(void)
 {
     setup();
+	writeChar('l');
+	writeChar('e');
+	writeChar('e');
+	writeChar('r');
+	writeChar(' ');
+	writeChar('e');
+	writeChar('l');
+	writeChar(' ');
+	writeChar('P');
+	writeChar('O');
+	writeChar('T');
+	
+	
     while (1) 
     {
-		writeChar('k');
+		
     }
 }
 /*********main*********/

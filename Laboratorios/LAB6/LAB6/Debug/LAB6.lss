@@ -3,27 +3,27 @@ LAB6.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  0000012e  2**0
+  0 .data         00000000  00800100  00800100  0000016a  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000000da  00000000  00000000  00000054  2**1
+  1 .text         00000116  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  0000012e  2**0
+  2 .comment      00000030  00000000  00000000  0000016a  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000160  2**2
+  3 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  0000019c  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000038  00000000  00000000  000001a0  2**0
+  4 .debug_aranges 00000038  00000000  00000000  000001dc  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000070a  00000000  00000000  000001d8  2**0
+  5 .debug_info   000007d2  00000000  00000000  00000214  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000065b  00000000  00000000  000008e2  2**0
+  6 .debug_abbrev 00000668  00000000  00000000  000009e6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000261  00000000  00000000  00000f3d  2**0
+  7 .debug_line   0000029a  00000000  00000000  0000104e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000054  00000000  00000000  000011a0  2**2
+  8 .debug_frame  00000054  00000000  00000000  000012e8  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000384  00000000  00000000  000011f4  2**0
+  9 .debug_str    00000384  00000000  00000000  0000133c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_ranges 00000028  00000000  00000000  00001578  2**0
+ 10 .debug_ranges 00000028  00000000  00000000  000016c0  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -64,7 +64,7 @@ Disassembly of section .text:
   70:	de bf       	out	0x3e, r29	; 62
   72:	cd bf       	out	0x3d, r28	; 61
   74:	0e 94 65 00 	call	0xca	; 0xca <main>
-  78:	0c 94 6b 00 	jmp	0xd6	; 0xd6 <_exit>
+  78:	0c 94 89 00 	jmp	0x112	; 0x112 <_exit>
 
 0000007c <__bad_interrupt>:
   7c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -142,15 +142,43 @@ int main(void)
 {
     setup();
   ca:	0e 94 59 00 	call	0xb2	; 0xb2 <setup>
-    while (1) 
-    {
-		writeChar('k');
-  ce:	8b e6       	ldi	r24, 0x6B	; 107
+	writeChar('l');
+  ce:	8c e6       	ldi	r24, 0x6C	; 108
   d0:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
-  d4:	fc cf       	rjmp	.-8      	; 0xce <main+0x4>
+	writeChar('e');
+  d4:	85 e6       	ldi	r24, 0x65	; 101
+  d6:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('e');
+  da:	85 e6       	ldi	r24, 0x65	; 101
+  dc:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('r');
+  e0:	82 e7       	ldi	r24, 0x72	; 114
+  e2:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar(' ');
+  e6:	80 e2       	ldi	r24, 0x20	; 32
+  e8:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('e');
+  ec:	85 e6       	ldi	r24, 0x65	; 101
+  ee:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('l');
+  f2:	8c e6       	ldi	r24, 0x6C	; 108
+  f4:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar(' ');
+  f8:	80 e2       	ldi	r24, 0x20	; 32
+  fa:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('P');
+  fe:	80 e5       	ldi	r24, 0x50	; 80
+ 100:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('O');
+ 104:	8f e4       	ldi	r24, 0x4F	; 79
+ 106:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+	writeChar('T');
+ 10a:	84 e5       	ldi	r24, 0x54	; 84
+ 10c:	0e 94 5e 00 	call	0xbc	; 0xbc <writeChar>
+ 110:	ff cf       	rjmp	.-2      	; 0x110 <main+0x46>
 
-000000d6 <_exit>:
-  d6:	f8 94       	cli
+00000112 <_exit>:
+ 112:	f8 94       	cli
 
-000000d8 <__stop_program>:
-  d8:	ff cf       	rjmp	.-2      	; 0xd8 <__stop_program>
+00000114 <__stop_program>:
+ 114:	ff cf       	rjmp	.-2      	; 0x114 <__stop_program>
