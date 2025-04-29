@@ -11,8 +11,12 @@
 #define F_CPU 16000000UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdio.h>
+#include "ADC_init/ADC_init.h"
 
-uint8_t mask_data = 0;
+uint8_t mask_data = 1;
+char valor_ADC[30];
+char dato;
 	
 /*********Librerias*********/
 void setup(void);
@@ -29,30 +33,33 @@ void writeString(char* texto);
 int main(void)
 {
     setup();
-	write('l');
-	write('e');
-	write('e');
-	write('r');
-	write(' ');
-	write('e');
-	write('l');
-	write(' ');
-	write('P');
-	write('O');
-	write('T');
-	writeString(" Se me quemo el nano\n");
     while (1) 
     {
+		if (mask_data==1){
+			mask_data=0;
+			writeString("Seleccione una opción:\n");
+			writeString("1) Leer POT\n");
+			writeString("2) Mostrar Asci\n");
+			writeString("\n");
+		}
+		else if (mask_data==3){
+			mask_data=1;	
+			write(dato);
+			writeString("\n");
+			writeString("\n");
+		}
+		
 		
     }
 }
-/*********main*********/
+
 
 
 /*********Subrutinas NON Interrupts*********/
 void setup(void){
 	cli();
 	initUART();
+	ADC_init(1, 5, 0, 1, 128);
 	sei();
 }
 
@@ -89,12 +96,44 @@ void writeString(char* texto){
 	
 }
 
-/*********Subrutinas NON Interrupts*********/
+
 
 
 /*********Subrutinas Interrupts*********/
 ISR(USART_RX_vect) {
-	char dato = UDR0;
+	if (mask_data==2){
+		dato=50;
+	}
+	else{
+		dato = UDR0;
+	}
+	
+	
+	
+	switch (dato){
+		case 49:
+		writeString(valor_ADC);
+		writeString("\n");
+		mask_data=1;
+		break;
+		case 50:
+		
+		if (mask_data==2){
+			dato = UDR0;
+			mask_data=3;
+		}
+		else{
+			writeString("Envie un caracter\n");
+			mask_data=2;
+		}
+		
+		break;
+		default:
+		mask_data=1;
+		break;
+	}
+	
+	/*
 	write(dato);
 	mask_data = (dato & 0b00111111);	//Limpiamos los bits mas significativos
 	PORTB = mask_data;
@@ -103,7 +142,12 @@ ISR(USART_RX_vect) {
 	
 	PORTD &= (0b00111111);				//Limpiamos los bits mas significativos del Puerto D
 	PORTD |= mask_data;					//Cargamos el nuevo valor
-	
+	*/
 }
-/*********Subrutinas NON Interrupts*********/
+
+ISR (ADC_vect){
+	sprintf(valor_ADC, "La lectura es: %d\n", ADCH);	//Guardo temporalmente el valor del adc como cadena
+	ADC_init(1, 5, 0, 1, 128); //releer
+}
+
 
